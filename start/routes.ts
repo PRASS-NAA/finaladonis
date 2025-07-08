@@ -20,6 +20,9 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 import './routes/airports'
+import './routes/passengers'
+import './routes/bookings'
+import './routes/flights'
 
 Route.get('/', async () => {
   return { hello: 'world' }

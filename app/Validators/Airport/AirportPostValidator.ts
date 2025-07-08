@@ -2,7 +2,23 @@ import { schema, CustomMessages, rules } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class AirportPostValidator {
-  constructor(protected ctx: HttpContextContract) {}
+  constructor(protected ctx: HttpContextContract) {
+    const body = this.ctx.request.body()
+
+    for (let key in body) {
+      const value = body[key]
+
+      if (typeof value === 'string') {
+        if (key === 'code') {
+          body[key] = value.toUpperCase()
+        } else {
+          body[key] = value.toLowerCase()
+        }
+      }
+  }
+
+      this.ctx.request.updateBody(body)
+  }
 
   public schema = schema.create({
     name:schema.string(),
@@ -15,15 +31,9 @@ export default class AirportPostValidator {
   })
 
   public messages: CustomMessages = {
-    'name.required':'Name is a required field !!',
-    'code.required':'code is a required field !!',
-    'city.required':'city is a required field !!',
-    'country.required':'country is a required field !!',
 
-    'name.string':'name must be a string !!',
-    'code.string':'code must be a string !!',
-    'city.string':'city must be a string !!',
-    'country.string':'country must be a string !!',
+    required: '{{ field }} is a required field !! ',
+    string: ' {{ field }} must be a string !! ',
 
     'code.minLength':'code must be of Length 3 !! eg: DXB , LAX',
     'code.maxLength':'code must be of Length 3 !! eg: DXB , LAX'

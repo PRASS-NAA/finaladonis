@@ -42,4 +42,5 @@ Server.middleware.register([
 |
 */
 Server.middleware.registerNamed({
+  logReq : () => import('../app/Middleware/ReqManyLog')
 })

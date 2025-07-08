@@ -1,142 +1,208 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import AirportPatchValidator from 'App/Validators/AirportPatchValidator';
-import AirportPostValidator from 'App/Validators/AirportPostValidator';
-import IdPathParamValidator from 'App/Validators/IdPathParamValidator'
+import AirportPostValidator from 'App/Validators/Airport/AirportPostValidator';
+import AirportIdValidator from 'App/Validators/Airport/AirportIdValidator';
 import AirportRepository from 'App/Repository/AirportRepository';
-import GetqValidator from 'App/Validators/GetqValidator';
-
+import AirportQValidator from 'App/Validators/Airport/AirportQValidator';
+import AirportIdAndUpdateValidator from 'App/Validators/Airport/AirportIdAndUpdateValidator';
+import AirportIdAndPatchValidator from 'App/Validators/Airport/AirportIdAndPatchValidator';
+import AirportDeleteManyValidator from 'App/Validators/Airport/AirportDeleteManyValidator';
+import InsertManyValidator from 'App/Validators/Airport/InsertManyValidator';
 
 export default class AirportsController {
+  public async index({ request, response }: HttpContextContract) {
+    try {
+      const { col, sort } = await request.validate(AirportQValidator);
 
+      const airports = (col && sort)
+        ? await AirportRepository.getAirportBySpecificCol(col, sort)
+        : await AirportRepository.getAllAirport();
 
-  public async index({request, response} : HttpContextContract){
-
-    const { col, sort } = await request.validate(GetqValidator);
-
-    try{
-      let airports;
-      if(col && sort )
-      {
-        airports = await AirportRepository.getAirportBySpecificCol(col,sort);
-      }else{
-        airports = await AirportRepository.getAllAirport();
-      }
-      return response.status(200).json(airports)
-
-    }catch(error)
-    {
-      return response.status(500).send({message:'Error occurred while fetching from DB', error:error.message})
+      return response.status(200).send({ data: airports, message: 'Airports fetched successfully!', success:true });
+    } catch (err) {
+      console.log("Error in AirportController - index method");
+      throw err;
     }
   }
 
+  public async show(ctx : HttpContextContract) {
+    try {
 
+      const validator = new AirportIdAndPatchValidator(ctx);
+      const p_id = ctx.params.id;
 
-  public async show({request,response} : HttpContextContract){
-
-
-    const {id} = await request.validate(IdPathParamValidator);
-    try{
+      const { id } = await ctx.request.validate({
+        schema: validator.schema,
+        data: { id: p_id },
+        messages: validator.messages
+        });
       const airport = await AirportRepository.getAirportById(id);
-      return response.status(200).send(airport)
-    }catch(err)
-    {
-      if(err.code === 'E_ROW_NOT_FOUND')
-      {
-        return response.status(404).send({ message: 'Airport not found', error: err.message });
-      }else{
-      return response.status(500).send({ message: "Error fetching data from DB", error: err.message });
-      }
+
+      return ctx.response.status(200).send({ data: airport, message: 'Airport fetched successfully!',success:true });
+    } catch (err) {
+      console.log("Error in AirportController - show method");
+      throw err;
     }
   }
 
+  public async store({ request, response }: HttpContextContract) {
+    try {
+      const airportDetails = await request.validate(AirportPostValidator);
 
-
-  public async store({request,response} : HttpContextContract){
-
-
-    const airportDetails = await request.validate(AirportPostValidator);
-
-    try{
       const newAirport = await AirportRepository.createAirport(airportDetails);
-      return response.status(201).send({message: ' succesfully inserted data into DB !', data: newAirport});
-    }catch(err)
-    {
-      return response.status(500).send({message:'error occurred while inserting data in DB ', error:err.message})
+
+      return response.status(201).send({ data: newAirport, message: 'Airport successfully created!',success:true });
+    } catch (err) {
+      console.log("Error in AirportController - store method");
+      throw err;
     }
   }
 
+  public async updatePut(ctx: HttpContextContract) {
+    try {
 
+      const updateValidator = new AirportIdAndUpdateValidator(ctx);
+      /*const { id } = await ctx.request.validate(AirportIdValidator);
+      const payload = await ctx.request.validate(AirportPostValidator);*/
 
-  public async updatePut({request, response} : HttpContextContract){
+      let id = ctx.params.id;
 
-
-    const { id } = await request.validate(IdPathParamValidator);
-    const payload = await request.validate(AirportPostValidator);
-
-    try{
-
-      const updatedAirport = await AirportRepository.airportUpdate(id, payload);
-      return response.status(200).send({message:'Airport successfully updated fully !! ', data:updatedAirport});
-    }catch(err)
-    {
-      if(err.code === 'E_ROW_NOT_FOUND')
-      {
-        return response.status(404).send({ message: 'Airport not found', error: err.message });
-      }else{
-        return response.status(500).send({message:'error occured while patch operation of airport in DB !! ', error: err.message});
+      let reqBody = ctx.request.only(['name','code','city','country']);
+      let dataToValidate = {
+        id, ...reqBody
       }
-    }
-  }
-
-
-
-  public async updatePatch({request, response} : HttpContextContract){
-
-
-    try{
-      const { id } = await request.validate(IdPathParamValidator);
-
-      const payload = await request.validate(AirportPatchValidator);
+      const payload = await ctx.request.validate({
+        schema:updateValidator.schema,
+        data:dataToValidate,
+        messages:updateValidator.messages
+      })
 
       const updatedAirport = await AirportRepository.airportUpdate(id, payload);
-      return response.status(200).send({message:'airport partially updated successfully !! ', data:updatedAirport});
 
-    }catch(err)
-    {
-      /*if(err.code === 'E_ROW_NOT_FOUND')
-      {
-        return response.status(404).send({ message: 'Airport not found', error: err.message });
-      }else{
-        return response.status(500).send({message:'error occured while patch operation of airport in DB !! ', error: err.message});
-      }*/
+      return ctx.response.status(200).send({ data: updatedAirport, message: 'Airport fully updated successfully!',success:true });
+    } catch (err) {
+      console.log("Error in AirportController - updatePut method");
+      throw err;
+    }
+  }
 
-        throw err;
+  public async updatePatch(ctx: HttpContextContract) {
+    try {
+      /*const { id } = await request.validate(AirportIdValidator);
+      const payload = await request.validate(AirportPatchValidator);*/
+
+      const id = ctx.params.id;
+
+      const reqBody = ctx.request.body();
+
+      const dataToBeValidated = {
+        id,
+        ...reqBody
+      }
+
+      const validator = new AirportIdAndPatchValidator(ctx);
+
+      const payload = await ctx.request.validate(
+        {
+          schema:validator.schema,
+          data:dataToBeValidated,
+          messages:validator.messages
+        }
+      )
+      const updatedAirport = await AirportRepository.airportUpdate(id, payload);
+
+      return ctx.response.status(200).send({ data: updatedAirport, message: 'Airport partially updated successfully!',success:true });
+    } catch (err) {
+      console.log("Error in AirportController - updatePatch method");
+      throw err;
 
     }
   }
 
+  public async destroy({ request, response }: HttpContextContract) {
+    try {
+      const { id } = await request.validate(AirportIdValidator);
 
-
-  public async destroy({request, response} : HttpContextContract){
-
-    const { id } = await request.validate(IdPathParamValidator);
-
-    try{
       const deletedAirport = await AirportRepository.airportDelete(id);
-      return response.status(200).send({message:'Airport successfully deleted ! ',data:deletedAirport});
 
-    }catch(err)
-    {
-      if(err.code === 'E_ROW_NOT_FOUND')
-      {
-        return response.status(404).send({ message: 'Airport not found', error: err.message });
-      }else{
-        return response.status(500).send({message:'error occurred while deleting airport in DB !! ', error: err.message});
-      }
+      return response.status(200).send({ data: deletedAirport, message: 'Airport successfully deleted!',success:true });
+    } catch (err) {
+      console.log("Error in AirportController - destroy method");
+      throw err;
     }
   }
 
+  public async departingFlights({ params, request, response }: HttpContextContract) {
+    try{
+
+      const { id } = await request.validate(AirportIdValidator)
+      const airport = await AirportRepository.loadDepartingFlights(id)
+
+      return response.json({
+      message: `Departing flights from airport ${airport.id} loaded successfully!`,
+      airport: airport.name,
+      flights: airport.departingFlights,success:true
+    })
+    }catch(err)
+    {
+      console.log("Error in AirportController - departingFlights method");
+      throw err;
+    }
+  }
+
+  public async arrivingFlights({ params, request, response }: HttpContextContract) {
+    try{
+      const { id } = await request.validate(AirportIdValidator)
+      const airport = await AirportRepository.loadArrivingFlights(id)
+
+    return response.json({
+      message: `Arriving flights at airport ${airport.id} loaded successfully!`,
+      airport: airport.name,
+      flights: airport.arrivingFlights,success:true
+    })
+    }catch(err)
+    {
+      console.log("Error in AirportController - arrivingFlight method");
+      throw err;
+    }
+  }
+
+  public async insertMany(ctx: HttpContextContract) {
+    try {
+
+    const { airports } = await ctx.request.validate(InsertManyValidator)
 
 
+    const inserted = await AirportRepository.insertBulk(airports)
 
+    return ctx.response.status(201).json({
+      message: 'Airports inserted successfully',
+      data: inserted,
+      success: true,
+    })
+  } catch (err) {
+    console.log("Error in AirportController - insertMany method");
+    throw err
+  }
+}
+
+
+  public async deleteMany(ctx : HttpContextContract)
+  {
+    try{
+      const { ids } = await ctx.request.validate(AirportDeleteManyValidator);
+
+      if(!Array.isArray(ids) || ids.length == 0)
+      {
+        throw new Error(' In bulk Delete give array of ids !!');
+      }
+
+      const deletedCount = await AirportRepository.deleteBulk(ids);
+
+      return ctx.response.status(200).json({message: `Deleted ${deletedCount} airport(s) successfully`,success: true})
+    }catch(err)
+    {
+      console.log("Error in AirportController - deleteMany method");
+      throw err;
+    }
+  }
 }

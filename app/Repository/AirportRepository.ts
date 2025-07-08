@@ -1,3 +1,4 @@
+import Database from "@ioc:Adonis/Lucid/Database";
 import Airport from "App/Models/Airport";
 
 
@@ -67,4 +68,27 @@ export default class AirportRepository{
     return delAirport;
   }
 
+  public static async loadDepartingFlights(airportId: number) {
+    const airport = await Airport.findOrFail(airportId)
+    await airport.load('departingFlights')
+    return airport
+  }
+
+   public static async loadArrivingFlights(airportId: number) {
+    const airport = await Airport.findOrFail(airportId)
+    await airport.load('arrivingFlights')
+    return airport
+  }
+
+  public static async insertBulk(airports)
+  {
+    return await Airport.createMany(airports);
+  }
+
+  public static async deleteBulk(ids)
+  {
+    const deleted = await Database.from('airports').whereIn('id',ids).delete();
+
+    return deleted;
+  }
 }

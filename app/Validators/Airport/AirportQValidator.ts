@@ -1,7 +1,7 @@
 import { schema, CustomMessages } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
-export default class GetqValidator {
+export default class AirportQValidator {
   constructor(protected ctx: HttpContextContract) {}
   public schema = schema.create({
     col:schema.enum.optional((['id','name','code','city','country'])),
