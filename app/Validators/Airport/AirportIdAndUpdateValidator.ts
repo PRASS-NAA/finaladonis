@@ -2,7 +2,27 @@ import { schema, CustomMessages, rules } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class AirportIdAndUpdateValidator {
-  constructor(protected ctx: HttpContextContract) {}
+  constructor(protected ctx: HttpContextContract) {
+    const body = this.ctx.request.body()
+
+    for (let key in body) {
+      const value = body[key]
+
+      if (typeof value === 'string') {
+        if (key === 'code') {
+          body[key] = value.toUpperCase()
+        } else {
+          body[key] = value.toLowerCase()
+        }
+      }
+  }
+   // Set default??
+  if (body.code === undefined || body.code === null) {
+    body.code = 'xxx'
+  }
+
+      this.ctx.request.updateBody(body)
+  }
 
   public schema = schema.create({
     id:schema.number([ rules.unsigned(),

@@ -8,4 +8,4 @@ Route.group(() =>
   Route.put('/:id','PassengersController.updatePut');
   Route.patch('/:id','PassengersController.updatePatch');
   Route.delete('/:id','PassengersController.destroy');
-}).prefix('/passengers');
+}).prefix('/passengers').middleware(['apiAuth']);

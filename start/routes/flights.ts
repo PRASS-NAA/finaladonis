@@ -12,4 +12,4 @@ Route.group(() =>
 
   Route.get('/:id/departure-airport', 'FlightsController.departureAirport');
 
-}).prefix('/flights');
+}).prefix('/flights').middleware(['apiAuth']);

@@ -7,7 +7,7 @@ Route.group(() =>
   Route.post('/','AirportsController.store');
   Route.put('/:id','AirportsController.updatePut');
   Route.patch('/:id','AirportsController.updatePatch');
-  Route.delete('/bulkDelete', 'AirportsController.deleteMany').middleware('logReq')
+  Route.delete('/bulkDelete', 'AirportsController.deleteMany').middleware(['logReq'])
   Route.delete('/:id','AirportsController.destroy');
 
   Route.get('/departing-flights/:id', 'AirportsController.departingFlights')
@@ -16,4 +16,4 @@ Route.group(() =>
   Route.post('/bulk', 'AirportsController.insertMany').middleware('logReq')
 
 
-}).prefix('/airports')
+}).prefix('/airports').middleware(['apiAuth'])

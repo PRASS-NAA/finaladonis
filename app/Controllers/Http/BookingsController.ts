@@ -10,8 +10,7 @@ export default class BookingsController {
       const bookings = await BookingRepository.showAllBookings();
       return response.status(200).json({ data: bookings, message: 'Successfully displayed all bookings!',success:true });
     } catch (err) {
-      console.log("Error in AirportController - index method");
-      throw err;
+      throw Object.assign(err, { location: 'AirportController - index method' })
     }
   }
 
@@ -21,8 +20,7 @@ export default class BookingsController {
       const booking = await BookingRepository.showSpecificBooking(id);
       return response.status(200).json({ data: booking, message: 'Successfully displayed booking!',success:true });
     } catch (err) {
-      console.log("Error in AirportController - show method");
-      throw err;
+      throw Object.assign(err, { location: 'AirportController - show method' })
     }
   }
 
@@ -32,8 +30,7 @@ export default class BookingsController {
       const booking = await BookingRepository.createBooking(data);
       return response.status(201).json({ data: booking, message: 'Booking successfully created!',success:true });
     } catch (err) {
-      console.log("Error in AirportController - store method");
-      throw err;
+      throw Object.assign(err, { location: 'AirportController - store method' })
     }
   }
 
@@ -44,8 +41,7 @@ export default class BookingsController {
       const booking = await BookingRepository.updateBookingPut(id, data);
       return response.status(200).json({ data: booking, message: 'Booking fully updated successfully!',success:true });
     } catch (err) {
-      console.log("Error in AirportController - updatePut method");
-      throw err;
+     throw Object.assign(err, { location: 'AirportController - updatePut method' })
     }
   }
 
@@ -56,8 +52,7 @@ export default class BookingsController {
       const booking = await BookingRepository.updateBookingPatch(id, data);
       return response.status(200).json({ data: booking, message: 'Booking partially updated successfully!',success:true });
     } catch (err) {
-      console.log("Error in AirportController - updatePatch method");
-      throw err;
+      throw Object.assign(err, { location: 'AirportController - updatePatch method' })
     }
   }
 
@@ -67,8 +62,7 @@ export default class BookingsController {
       await BookingRepository.deleteBooking(id);
       return response.status(200).json({ message: 'Booking successfully deleted!',success:true });
     } catch (err) {
-      console.log("Error in AirportController - destroy method");
-      throw err;
+      throw Object.assign(err, { location: 'AirportController - destroy method' })
     }
   }
 }

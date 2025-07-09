@@ -19,8 +19,7 @@ export default class AirportsController {
 
       return response.status(200).send({ data: airports, message: 'Airports fetched successfully!', success:true });
     } catch (err) {
-      console.log("Error in AirportController - index method");
-      throw err;
+      throw Object.assign(err, { location: 'AirportController - index method' })
     }
   }
 
@@ -39,7 +38,7 @@ export default class AirportsController {
 
       return ctx.response.status(200).send({ data: airport, message: 'Airport fetched successfully!',success:true });
     } catch (err) {
-      console.log("Error in AirportController - show method");
+      throw Object.assign(err, { location: 'AirportController - show method' })
       throw err;
     }
   }
@@ -52,7 +51,7 @@ export default class AirportsController {
 
       return response.status(201).send({ data: newAirport, message: 'Airport successfully created!',success:true });
     } catch (err) {
-      console.log("Error in AirportController - store method");
+      throw Object.assign(err, { location: 'AirportController - store method' })
       throw err;
     }
   }
@@ -80,7 +79,7 @@ export default class AirportsController {
 
       return ctx.response.status(200).send({ data: updatedAirport, message: 'Airport fully updated successfully!',success:true });
     } catch (err) {
-      console.log("Error in AirportController - updatePut method");
+      throw Object.assign(err, { location: 'AirportController - updatePut method' })
       throw err;
     }
   }
@@ -112,7 +111,7 @@ export default class AirportsController {
 
       return ctx.response.status(200).send({ data: updatedAirport, message: 'Airport partially updated successfully!',success:true });
     } catch (err) {
-      console.log("Error in AirportController - updatePatch method");
+      throw Object.assign(err, { location: 'AirportController - updatePatch method' })
       throw err;
 
     }
@@ -126,7 +125,7 @@ export default class AirportsController {
 
       return response.status(200).send({ data: deletedAirport, message: 'Airport successfully deleted!',success:true });
     } catch (err) {
-      console.log("Error in AirportController - destroy method");
+      throw Object.assign(err, { location: 'AirportController - destroy method' })
       throw err;
     }
   }
@@ -144,7 +143,7 @@ export default class AirportsController {
     })
     }catch(err)
     {
-      console.log("Error in AirportController - departingFlights method");
+      throw Object.assign(err, { location: 'AirportController - departingFlights method' })
       throw err;
     }
   }
@@ -161,7 +160,7 @@ export default class AirportsController {
     })
     }catch(err)
     {
-      console.log("Error in AirportController - arrivingFlight method");
+      throw Object.assign(err, { location: 'AirportController - arrivingFlights method' })
       throw err;
     }
   }
@@ -180,7 +179,7 @@ export default class AirportsController {
       success: true,
     })
   } catch (err) {
-    console.log("Error in AirportController - insertMany method");
+    throw Object.assign(err, { location: 'AirportController - insertMany method' })
     throw err
   }
 }
@@ -201,7 +200,7 @@ export default class AirportsController {
       return ctx.response.status(200).json({message: `Deleted ${deletedCount} airport(s) successfully`,success: true})
     }catch(err)
     {
-      console.log("Error in AirportController - deleteMany method");
+      throw Object.assign(err, { location: 'AirportController - deleteMany method' })
       throw err;
     }
   }

@@ -20,8 +20,7 @@ export default class PassengersController {
 
       return response.status(200).json({ data: passengers, message: 'Successfully displayed passengers!',success:true });
     } catch (err) {
-      console.log("Error in AirportController - index method");
-      throw err;
+      throw Object.assign(err, { location: 'AirportController - index method' })
     }
   }
 
@@ -33,8 +32,7 @@ export default class PassengersController {
 
       return response.status(200).json({ data: passenger, message: 'Successfully displayed passenger!',success:true });
     } catch (err) {
-      console.log("Error in AirportController - show method");
-      throw err;
+      throw Object.assign(err, { location: 'AirportController - show method' })
     }
   }
 
@@ -46,8 +44,7 @@ export default class PassengersController {
 
       return response.status(201).json({ data: passenger, message: 'Passenger successfully created!' ,success:true});
     } catch (err) {
-      console.log("Error in AirportController - store method");
-      throw err;
+      throw Object.assign(err, { location: 'AirportController - store method' })
     }
   }
 
@@ -60,8 +57,7 @@ export default class PassengersController {
 
       return response.status(200).json({ data: updatedPassenger, message: 'Passenger fully updated!',success:true });
     } catch (err) {
-      console.log("Error in AirportController - updatePut method");
-      throw err;
+      throw Object.assign(err, { location: 'AirportController - updatePut method' })
     }
   }
 
@@ -74,8 +70,7 @@ export default class PassengersController {
 
       return response.status(200).json({ data: updatedPassenger, message: 'Passenger partially updated!',success:true });
     } catch (err) {
-      console.log("Error in AirportController - updatePatch method");
-      throw err;
+      throw Object.assign(err, { location: 'AirportController - updatePatch method' })
     }
   }
 
@@ -91,8 +86,7 @@ export default class PassengersController {
 
       return response.status(200).json({ message: 'Passenger successfully deleted!',success:true });
     } catch (err) {
-      console.log("Error in AirportController - destroy method");
-      throw err;
+      throw Object.assign(err, { location: 'AirportController - destroy method' })
     }
   }
 }

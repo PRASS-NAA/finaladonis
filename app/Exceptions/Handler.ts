@@ -27,6 +27,7 @@ export default class ExceptionHandler extends HttpExceptionHandler {
       return response.status(422).send({
         status: 'error',
         message: 'Validation failed',
+        location:error.location,
         errors: error.messages,
         success:false
       })
@@ -38,6 +39,7 @@ export default class ExceptionHandler extends HttpExceptionHandler {
         status: 'error',
         message: 'DB operation failed',
         errors: error.messages,
+        location:error.location,
         success:false
       })
     }
@@ -47,6 +49,7 @@ export default class ExceptionHandler extends HttpExceptionHandler {
       return response.status(error.status).send({
         status: 'error',
         message: error.message,
+        location:error.location,
         success:false
       })
     }
@@ -56,6 +59,7 @@ export default class ExceptionHandler extends HttpExceptionHandler {
     return response.status(500).send({
       status: 'error',
       message: 'Internal Server Error',
+      location:error.location,
       details: process.env.NODE_ENV === 'development' ? error.message : undefined,
       success:false
     })

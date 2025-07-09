@@ -11,6 +11,8 @@ export default class AirportRepository{
 
     airports = await Airport.all();
 
+    console.log(airports);
+
     return airports;
   }
 
@@ -52,10 +54,12 @@ export default class AirportRepository{
   {
     const putAirport = await Airport.findOrFail(id);
 
+    console.log('before update : ', putAirport.$attributes.name,"original name : ", putAirport.$original.name);
     putAirport.merge(airportDetails);
-
+    console.log("After merge ", putAirport.$attributes.name, "original row ",putAirport.$original.name)
     await putAirport.save();
 
+    console.log("after save method ", putAirport.$attributes.name, "original row ", putAirport.$original.name);
     return putAirport;
   }
 
