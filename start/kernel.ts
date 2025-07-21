@@ -42,5 +42,6 @@ Server.middleware.register([
 */
 Server.middleware.registerNamed({
   logReq : () => import('../app/Middleware/ReqManyLog'),
-  apiAuth: () => import('../app/Middleware/ApiAuth')
+  apiAuth: () => import('../app/Middleware/ApiAuth'),
+  jwtAuth: () => import('../app/Middleware/Jwtauth')
 })

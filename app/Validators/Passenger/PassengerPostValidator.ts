@@ -23,8 +23,9 @@ export default class PassengerPostValidator {
       rules.alpha(),
     ]),
     email: schema.string({},[
-      rules.email()
-    ])
+      rules.email(),
+    ]),
+    password: schema.string({})
   })
 
   public messages: CustomMessages = {

@@ -1,5 +1,8 @@
 import Database from "@ioc:Adonis/Lucid/Database";
 import Passenger from "App/Models/Passenger";
+import Env from '@ioc:Adonis/Core/Env'
+import jwt from 'jsonwebtoken'
+import { Exception } from "@adonisjs/core/build/standalone";
 
 export default class PassengerRepository {
 
@@ -55,5 +58,28 @@ export default class PassengerRepository {
 
     await passenger.delete();
     return passenger;
+  }
+
+  static async loginPassenger(passenger)
+  {
+    console.log(passenger);
+
+    const user = await Passenger.findByOrFail('email', passenger.email);
+
+    if(!(user.password == passenger.password))
+    {
+      throw new Exception("Unauthorized -- wrong password ");
+    }
+
+    const payload = {
+      email: user.email
+    }
+
+
+    const token = jwt.sign(payload, Env.get('JWT_SECRET'), {
+      expiresIn: '1h',
+    })
+
+    return token;
   }
 }

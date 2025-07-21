@@ -16,4 +16,4 @@ Route.group(() =>
   Route.post('/bulk', 'AirportsController.insertMany').middleware('logReq')
 
 
-}).prefix('/airports').middleware(['apiAuth'])
+}).prefix('/airports').middleware(['jwtAuth'])

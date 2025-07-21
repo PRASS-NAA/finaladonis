@@ -1,6 +1,4 @@
-
-import { BaseModel, column, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
-import Booking from './Booking'
+import { BaseModel, column} from '@ioc:Adonis/Lucid/Orm'
 
 
 export default class Passenger extends BaseModel {
@@ -9,10 +7,9 @@ export default class Passenger extends BaseModel {
 
   @column()
   public name: string
-
   @column()
   public email: string
 
-  @hasMany(() => Booking)
-  public bookings: HasMany<typeof Booking>
+  @column({ serializeAs: null })
+  public password: string
 }

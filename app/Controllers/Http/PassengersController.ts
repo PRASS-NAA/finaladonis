@@ -3,6 +3,8 @@ import PassengerIdValidator from 'App/Validators/Passenger/PassengerIdValidator'
 import PassengerPostValidator from 'App/Validators/Passenger/PassengerPostValidator';
 import PassengerPatchValidator from 'App/Validators/Passenger/PassengerPatchValidator';
 import PassengerRepository from 'App/Repository/PassengerRepository';
+import LoginValidator from 'App/Validators/Passenger/LoginValidator';
+
 
 export default class PassengersController {
 
@@ -87,6 +89,20 @@ export default class PassengersController {
       return response.status(200).json({ message: 'Passenger successfully deleted!',success:true });
     } catch (err) {
       throw Object.assign(err, { location: 'AirportController - destroy method' })
+    }
+  }
+
+  async login({request, response})
+  {
+    try{
+      const payload = await request.validate(LoginValidator);
+
+      const loggedIn = await PassengerRepository.loginPassenger(payload);
+
+      return response.status(200).json({ message: 'login succesfull', token:loggedIn, success:true})
+    }catch(err)
+    {
+      throw Object.assign(err, { location : 'PaseengersController - login method'})
     }
   }
 }
